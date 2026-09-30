@@ -5,7 +5,11 @@ export default async function handler(req, res) {
     const { prompt } = req.body;
     const apiKey = process.env.GEMINI_API_KEY;
 
-    // Direct Google Gemini API call — 100% Free
+    if (!apiKey) {
+      return res.status(500).json({ error: "Configuration Error: GEMINI_API_KEY is missing on Vercel." });
+    }
+
+    // Direct Google Gemini API call — 100% Free & Independent
     const response = await fetch(`https://googleapis.com{apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
