@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QalamAI — Enterprise Content Intelligence Platform</title>
+    <style>
+        /* Pure Professional Global Styling */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #030712; color: #f3f4f6; min-height: 100vh; padding: 0 20px; }
+        
+        /* Header */
+        header { max-width: 1000px; margin: 0 auto; padding: 25px 0; display: flex; justify-content: space-between; align-items: center; border-b: 1px solid #1f2937; }
+        .logo { font-size: 24px; font-weight: 900; letter-spacing: 1px; background: linear-gradient(to right, #a78bfa, #f472b6, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .badge { font-size: 11px; font-weight: 600; padding: 4px 12px; background-color: rgba(88, 28, 135, 0.2); border: 1px solid rgba(139, 92, 246, 0.3); color: #c084fc; border-radius: 20px; }
+        
+        /* Main Layout */
+        main { max-width: 800px; margin: 60px auto; text-align: center; }
+        h1 { font-size: 48px; font-weight: 800; letter-spacing: -1px; margin-bottom: 15px; color: #ffffff; line-height: 1.2; }
+        h1 span { background: linear-gradient(to right, #c084fc, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { color: #9ca3af; font-size: 17px; max-width: 620px; margin: 0 auto 40px auto; line-height: 1.6; }
+        
+        /* AI Input Box Dashboard */
+        .dashboard-box { background-color: #111827; border: 1px solid #374151; padding: 30px; border-radius: 16px; text-align: left; max-width: 600px; margin: 0 auto 60px auto; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); }
+        label { display: block; font-size: 14px; font-weight: 500; color: #d1d5db; margin-bottom: 10px; }
+        input[type="text"] { width: 100%; padding: 14px; background-color: #030712; border: 1px solid #374151; border-radius: 10px; color: #f3f4f6; font-size: 15px; outline: none; transition: border 0.3s; margin-bottom: 20px; }
+        input[type="text"]:focus { border-color: #8b5cf6; }
+        
+        button.magic-btn { width: 100%; padding: 14px; background: linear-gradient(to right, #7c3aed, #4f46e5); color: white; border: none; font-size: 16px; font-weight: 700; border-radius: 10px; cursor: pointer; transition: transform 0.1s, opacity 0.3s; }
+        button.magic-btn:hover { opacity: 0.95; }
+        button.magic-btn:active { transform: scale(0.98); }
+        
+        .output-panel { margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(55, 65, 81, 0.5); }
+        .output-label { font-size: 11px; font-weight: 700; color: #4b5563; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .output-placeholder { width: 100%; min-height: 100px; padding: 15px; background-color: rgba(3, 7, 18, 0.4); border: 1px dashed #374151; border-radius: 10px; color: #6b7280; font-size: 14px; font-style: italic; display: flex; align-items: center; justify-content: center; }
+        
+        /* Pricing Cards */
+        .pricing-section { max-width: 900px; margin: 0 auto; padding: 40px 0; border-top: 1px solid #1f2937; }
+        .pricing-section h2 { font-size: 28px; font-weight: 700; margin-bottom: 30px; }
+        .grid { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+        .card { background-color: rgba(17, 24, 39, 0.5); border: 1px solid #1f2937; padding: 25px; border-radius: 12px; width: 260px; text-align: left; display: flex; flex-direction: column; justify-content: space-between; }
+        .card.popular { border: 2px solid #8b5cf6; background-color: #111827; position: relative; }
+        .popular-badge { position: absolute; top: -12px; right: 15px; background-color: #8b5cf6; color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; }
+        .card h3 { font-size: 18px; margin-bottom: 10px; color: #e5e7eb; }
+        .card.popular h3 { color: #a78bfa; }
+        .price { font-size: 24px; font-weight: 900; margin-bottom: 12px; color: #ffffff; }
+        .price span { font-size: 12px; color: #6b7280; font-weight: 400; }
+        .card p { font-size: 13px; color: #9ca3af; margin-bottom: 20px; line-height: 1.4; }
+        .card-btn { width: 100%; padding: 8px; background-color: #1f2937; color: #d1d5db; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; }
+        .card.popular .card-btn { background-color: #8b5cf6; color: white; }
+        
+        /* Footer */
+        footer { text-align: center; padding: 40px 0; font-size: 12px; color: #4b5563; border-top: 1px solid #1f2937; margin-top: 60px; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. HEADER -->
+    <header>
+        <div class="logo">QalamAI✨</div>
+        <div class="badge">Global Suite v1.0</div>
+    </header>
+
+    <!-- 2. MAIN INTERFACE -->
+    <main>
+        <h1>AI-Powered Content Intelligence For <span>Your Business</span></h1>
+        <p class="subtitle">
+            Supercharge your brand's digital marketing with enterprise-grade AI. Instantly generate high-converting ad copies, social media posts, and creative content designed to scale your global revenue.
+        </p>
+
+        <!-- The Magic AI Box -->
+        <div class="dashboard-box">
+            <label>What would you like the AI to generate today?</label>
+            <input type="text" placeholder="e.g., A premium Facebook ad copy for a luxury fashion brand...">
+            
+            <button class="magic-btn">Generate Magic ✨</button>
+
+            <!-- Output Box -->
+            <div class="output-panel">
+                <div class="output-label">QalamAI Engine Output</div>
+                <div class="output-placeholder">
+                    Your high-converting marketing copy will be generated here in real-time...
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. PRICING PLANS (Global Dollars Model) -->
+        <div class="pricing-section">
+            <h2>Flexible & Transparent Pricing</h2>
+            <div class="grid">
+                <!-- Free -->
+                <div class="card">
+                    <div>
+                        <h3>Free Tier ✨</h3>
+                        <div class="price">$0 <span>/ mo</span></div>
+                        <p>Generate up to 3 highly optimized marketing posts every month.</p>
+                    </div>
+                    <button class="card-btn">Default Plan Active</button>
+                </div>
+                <!-- Popular Global -->
+                <div class="card popular">
+                    <div class="popular-badge">Popular</div>
+                    <div>
+                        <h3>Growth Tier 🛍️</h3>
+                        <div class="price">$5 <span>/ mo</span></div>
+                        <p>Generate 50 premium posts per month with high-speed API priority server access.</p>
+                    </div>
+                    <button class="card-btn" style="cursor: pointer;">Upgrade to Growth</button>
+                </div>
+                <!-- Pro Global -->
+                <div class="card">
+                    <div>
+                        <h3>Enterprise Pro 🚀</h3>
+                        <div class="price">$12 <span>/ mo</span></div>
+                        <p>Unlimited original content generation combined with our advanced predictive marketing engine.</p>
+                    </div>
+                    <button class="card-btn" style="cursor: pointer;">Upgrade to Pro</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        &copy; 2026 QalamAI Inc. All Rights Reserved. Proprietary Global Technology System.
+    </footer>
+
+</body>
+</html>
