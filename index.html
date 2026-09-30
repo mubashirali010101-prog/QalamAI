@@ -1,127 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QalamAI - AI-Powered Content Intelligence</title>
-    <style>
-        /* Pure Premium Dark Mode CSS (No external frameworks needed) */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0b0f19; color: #f3f4f6; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; }
-        header { max-width: 800px; width: 100%; margin: 0 auto; display: flex; justify-content: space-between; items-center; padding: 10px 0; }
-        .logo { font-size: 24px; font-weight: bold; color: #ffffff; tracking-wide: 1px; }
-        .logo span { color: #a78bfa; }
-        .badge { background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); color: #c084fc; padding: 6px 16px; rounded-radius: 20px; border-radius: 20px; font-size: 12px; font-weight: 500; }
-        main { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; max-width: 800px; width: 100%; margin: 0 auto; padding: 40px 0; }
-        .hero { text-align: center; margin-bottom: 35px; max-width: 600px; }
-        .hero h1 { font-size: 38px; font-weight: 800; color: #ffffff; line-height: 1.2; margin-bottom: 15px; }
-        .hero h1 span { background: linear-gradient(to right, #c084fc, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero p { color: #9ca3af; font-size: 15px; line-height: 1.6; }
-        .card { width: 100%; background: #111827; border: 1px solid #1f2937; padding: 30px; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); }
-        .field-group { margin-bottom: 20px; }
-        .label { block: text; font-size: 11px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
-        input[type="text"] { width: 100%; background: #070a12; border: 1px solid #374151; border-radius: 10px; padding: 12px 16px; color: #f3f4f6; font-size: 14px; outline: none; transition: border 0.2s; }
-        input[type="text"]:focus { border-color: #8b5cf6; }
-        button { w-full: 100%; width: 100%; background: linear-gradient(to right, #7c3aed, #4f46e5); color: white; border: none; padding: 14px; font-size: 15px; font-weight: 600; border-radius: 10px; cursor: pointer; transition: opacity 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; }
-        button:hover { opacity: 0.95; }
-        button:disabled { background: #374151; cursor: not-allowed; color: #9ca3af; }
-        .output-box { margin-top: 25px; border-top: 1px solid #1f2937; padding-top: 20px; }
-        .output-container { width: 100%; min-height: 120px; background: rgba(7, 10, 18, 0.5); border: 1px dashed #374151; border-radius: 10px; padding: 15px; font-size: 14px; color: #9ca3af; line-height: 1.6; white-space: pre-wrap; }
-        .loading-text { color: #a78bfa; font-style: italic; }
-        .error-text { color: #f87171; }
-        footer { text-align: center; font-size: 11px; color: #4b5563; padding-top: 20px; border-top: 1px solid rgba(31, 41, 55, 0.5); }
-    </style>
-</head>
-<body>
+<script>
+    // 1. Core Config (Agar aapke paas API key abhi nahi bhi lagi, tab bhi proxy block nahi hone degi)
+    const GEMINI_API_KEY = "YOUR_REAL_API_KEY_HERE"; 
+    
+    // Direct link block ho toh hum is automated tunnel routing ko target karte hain:
+    const DIRECT_ENDPOINT = `https://googleapis.com{GEMINI_API_KEY}`;
+    const PROXY_ENDPOINT = `https://allorigins.win{encodeURIComponent(DIRECT_ENDPOINT)}`;
 
-    <header>
-        <div class="logo">QalamAI <span>✨</span></div>
-        <div class="badge">Global Suite v1.0</div>
-    </header>
+    const generateBtn = document.getElementById('generate-btn') || document.querySelector('button');
+    const promptInput = document.getElementById('prompt-input') || document.querySelector('input[type="text"]') || document.querySelector('textarea');
+    const outputContainer = document.getElementById('output-container') || document.querySelector('.border-dashed') || document.querySelector('[class*="Engine Output"]');
 
-    <main>
-        <div class="hero">
-            <h1>AI-Powered Content Intelligence <br><span>For Your Business</span></h1>
-            <p>Supercharge your brand's digital marketing with enterprise-grade AI. Instantly generate high-converting ad copies, social media posts, and creative content.</p>
-        </div>
+    if (generateBtn && promptInput && outputContainer) {
+        generateBtn.addEventListener('click', async () => {
+            const promptText = promptInput.value.trim();
+            
+            if (!promptText) {
+                alert("Please write a prompt first!");
+                return;
+            }
 
-        <div class="card">
-            <div class="field-group">
-                <label class="label">What would you like the AI to generate today?</label>
-                <input id="prompt-input" type="text" placeholder="e.g., Write a high-converting Facebook ad copy...">
-            </div>
+            // UI State Change: Freeze state to prevent loops
+            generateBtn.disabled = true;
+            const originalBtnText = generateBtn.innerHTML;
+            generateBtn.innerHTML = "Generating Magic... ✨";
+            outputContainer.innerHTML = `<span style="color: #a78bfa; font-style: italic;">QalamAI Engine is communicating safely via secure tunnel...</span>`;
 
-            <button id="generate-btn">
-                <span>Generate Magic</span> ✨
-            </button>
+            // Payload Structure Setup
+            const payload = {
+                contents: [{
+                    parts: [{ text: promptText }]
+                }]
+            };
 
-            <div class="output-box">
-                <label class="label">QalamAI Engine Output</label>
-                <div id="output-container">Your high-converting marketing copy will be generated here in real-time...</div>
-            </div>
-        </div>
-    </main>
+            try {
+                // First Attempt: Safe Proxy Route to completely bypass "Failed to fetch" browser blocks
+                const response = await fetch(PROXY_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
 
-    <footer>
-        &copy; 2026 QalamAI Intelligence Suite. All rights reserved.
-    </footer>
+                if (!response.ok) throw new Error("Tunnel routing issue.");
 
-    <script>
-        // 🚨 CONFIGURATION: Apni real Google AI Studio key yahan quotes "" ke andar lagayein:
-        const GEMINI_API_KEY = "YOUR_REAL_API_KEY_HERE"; 
-        const GEMINI_ENDPOINT = `https://googleapis.com{GEMINI_API_KEY}`;
-
-        const generateBtn = document.getElementById('generate-btn');
-        const promptInput = document.getElementById('prompt-input');
-        const outputContainer = document.getElementById('output-container');
-
-        if (generateBtn && promptInput && outputContainer) {
-            generateBtn.addEventListener('click', async () => {
-                const promptText = promptInput.value.trim();
+                const proxyData = await response.json();
+                // AllOrigins wraps data inside a contents string, we parse it safely here:
+                const data = JSON.parse(proxyData.contents);
                 
-                if (!promptText) {
-                    alert("Please write a prompt first!");
-                    return;
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    outputContainer.style.color = "#f3f4f6";
+                    outputContainer.innerText = data.candidates[0].content.parts[0].text;
+                } else if (data.error) {
+                    throw new Error(data.error.message || "API Key Invalid");
+                } else {
+                    throw new Error("Invalid structure returned.");
                 }
 
-                // UI Loading State
-                generateBtn.disabled = true;
-                generateBtn.innerText = "Generating Magic... ✨";
-                outputContainer.innerHTML = `<span class="loading-text">QalamAI Engine is crafting your response...</span>`;
-
+            } catch (error) {
+                console.warn("Proxy tunnel bypassed, trying direct secondary link...");
+                
+                // Fallback Attempt: Agar proxy server temporary busy ho, toh direct link backup chalayein
                 try {
-                    const response = await fetch(GEMINI_ENDPOINT, {
+                    const directResponse = await fetch(DIRECT_ENDPOINT, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: promptText }] }]
-                        })
+                        body: JSON.stringify(payload)
                     });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP Error Status: ${response.status}`);
-                    }
-
-                    const data = await response.json();
                     
-                    // FIXED JSON PARSING STRUCTURE
-                    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
-                        const aiContentResult = data.candidates[0].content.parts[0].text;
+                    const directData = await directResponse.json();
+                    if (directData.candidates && directData.candidates[0].content.parts[0].text) {
                         outputContainer.style.color = "#f3f4f6";
-                        outputContainer.innerText = aiContentResult;
+                        outputContainer.innerText = directData.candidates[0].content.parts[0].text;
                     } else {
-                        throw new Error("Invalid structure returned from Google API.");
+                        throw new Error(directData.error?.message || "Authentication Failed");
                     }
-
-                } catch (error) {
-                    console.error("Error:", error);
-                    outputContainer.innerHTML = `<span class="error-text">Failed to generate content. Error: ${error.message}. Please double-check your API Key string inside the code.</span>`;
-                } finally {
-                    generateBtn.disabled = false;
-                    generateBtn.innerText = "Generate Magic ✨";
+                } catch (fallbackError) {
+                    outputContainer.innerHTML = `<span style="color: #f87171;">System Configuration Block: Kindly ensure your Google Studio API Key is valid. Error: ${fallbackError.message}</span>`;
                 }
-            });
-        }
-    </script>
-</body>
-</html>
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = originalBtnText;
+            }
+        });
+    }
+</script>
