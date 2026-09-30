@@ -1,102 +1,63 @@
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gemini API Demo</title>
-</head>
+// 1. Configuration (Apni real key yahan paste karein)
+const GEMINI_API_KEY = "YOUR_REAL_API_KEY_HERE"; 
+const GEMINI_ENDPOINT = `https://googleapis.com{GEMINI_API_KEY}`;
 
-<body>
+// 2. Selectors (Aapke UI design ke mutabiq targets)
+const generateBtn = document.querySelector('button'); // Aapka "Generate Magic" button
+const promptInput = document.querySelector('input[type="text"]') || document.querySelector('textarea'); // Input field
+const outputContainer = document.querySelector('.border-dashed') || document.querySelector('#output'); // QalamAI Engine Output area
 
-  <textarea id="promptInput" placeholder="Enter your prompt..."></textarea>
-  <button id="generateBtn">Generate</button>
-
-  <div id="output"></div>
-
-  <script>
-    // IMPORTANT:
-    // Do not expose a real API key in production frontend code.
-    // Use a backend/server-side proxy for production applications.
-    const API_KEY = "YOUR_GEMINI_API_KEY";
-
-    const MODEL = "gemini-1.5-flash";
-
-    const generateBtn = document.getElementById("generateBtn");
-    const promptInput = document.getElementById("promptInput");
-    const output = document.getElementById("output");
-
-    async function generateContent() {
-      const userPrompt = promptInput.value.trim();
-
-      if (!userPrompt) {
-        output.textContent = "Please enter a prompt.";
-        return;
-      }
-
-      // UI loading state
-      generateBtn.disabled = true;
-      generateBtn.textContent = "Loading...";
-      output.textContent = "";
-
-      try {
-        const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type": "application/json",
-              "x-goog-api-key": API_KEY
-            },
-
-            body: JSON.stringify({
-              contents: [
-                {
-                  parts: [
-                    {
-                      text: userPrompt
-                    }
-                  ]
-                }
-              ]
-            })
-          }
-        );
-
-        // Convert HTTP response to JSON
-        const data = await response.json();
-
-        // Handle API errors
-        if (!response.ok) {
-          throw new Error(
-            data?.error?.message || "Gemini API request failed."
-          );
+// 3. Main Logic Execution
+if (generateBtn && promptInput && outputContainer) {
+    generateBtn.addEventListener('click', async () => {
+        const promptText = promptInput.value.trim();
+        
+        if (!promptText) {
+            alert("Please enter a prompt first!");
+            return;
         }
 
-        // Exact response path requested
-        const generatedText =
-          data.candidates[0].content.parts[0].text;
+        // Loading State: Button ko freeze karein taake user baar baar click na kare
+        generateBtn.disabled = true;
+        const originalBtnText = generateBtn.innerHTML;
+        generateBtn.innerHTML = "Generating Magic... ✨";
+        outputContainer.innerHTML = `<span style="color: #a78bfa; font-style: italic;">QalamAI is thinking and crafting your copy...</span>`;
 
-        // Display result
-        output.textContent = generatedText;
+        try {
+            // API Call Execution
+            const response = await fetch(GEMINI_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{ text: promptText }]
+                    }]
+                })
+            });
 
-      } catch (error) {
-        console.error("Gemini API Error:", error);
+            if (!response.ok) {
+                throw new Error(`HTTP Error Status: ${response.status}`);
+            }
 
-        output.textContent =
-          "Error: " + (error.message || "Something went wrong.");
+            const data = await response.json();
+            
+            // ✅ EXACT FIXED GEMINI PARSING FORMAT (No more hanging)
+            if (data.candidates && data.candidates[0].content.parts[0].text) {
+                const aiResult = data.candidates[0].content.parts[0].text;
+                outputContainer.innerText = aiResult;
+            } else {
+                throw new Error("Invalid response structure from Gemini API");
+            }
 
-      } finally {
-        // Restore UI state
-        generateBtn.disabled = false;
-        generateBtn.textContent = "Generate";
-      }
-    }
-
-    generateBtn.addEventListener("click", generateContent);
-  </script>
-
-</body>
-</html>
-```
+        } catch (error) {
+            console.error("QalamAI Suite Error:", error);
+            outputContainer.innerHTML = `<span style="color: #f87171;">Failed to generate content. Error: ${error.message}</span>`;
+        } finally {
+            // Reset State: UI ko wapas active karein
+            generateBtn.disabled = false;
+            generateBtn.innerHTML = originalBtnText;
+        }
+    });
+} else {
+    console.error("QalamAI Setup Error: HTML Input, Button, or Output elements not found. Please verify DOM classes/tags.");
+}
