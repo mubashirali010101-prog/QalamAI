@@ -1,85 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QalamAI ✨ - AI Content Intelligence</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #080d17;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: min(100% - 32px, 760px);
+            margin: auto;
+        }
+
+        /* HEADER */
+        header {
+            height: 85px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            color: #f5c542;
+        }
+
+        .version {
+            border: 1px solid #4d2a9d;
+            background: rgba(96, 43, 190, 0.12);
+            color: #b98cff;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* HERO */
+        .hero {
+            text-align: center;
+            padding: 75px 0 35px;
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 52px);
+            line-height: 1.12;
+            font-weight: 900;
+            max-width: 650px;
+            margin: auto;
+        }
+
+        .hero h1 .purple {
+            color: #a66cff;
+        }
+
+        .hero p {
+            max-width: 600px;
+            margin: 22px auto 0;
+            color: #9aa7bd;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* CARD */
+        .card {
+            background: #101827;
+            border: 1px solid #273247;
+            border-radius: 15px;
+            padding: 28px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .label {
+            display: block;
+            color: #8fa5c4;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 9px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            resize: vertical;
+            background: #050912;
+            border: 1px solid #344158;
+            border-radius: 10px;
+            outline: none;
+            color: #ffffff;
+            padding: 15px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+
+        textarea:focus {
+            border-color: #7844ff;
+            box-shadow: 0 0 0 3px rgba(120, 68, 255, 0.12);
+        }
+
+        .generate-btn {
+            width: 100%;
+            margin-top: 18px;
+            height: 48px;
+            border: none;
+            border-radius: 9px;
+            background: linear-gradient(90deg, #8038ee, #4e43e7);
+            color: white;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.08);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            height: 1px;
+            background: #202b3d;
+            margin: 24px 0;
+        }
+
+        .output-label {
+            color: #8fa5c4;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        #output {
+            min-height: 60px;
+            color: #dbe4f3;
+            font-size: 15px;
+            line-height: 1.75;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .error {
+            color: #ff5e68 !important;
+        }
+
+        .success {
+            color: #dbe4f3;
+        }
+
+        .loading {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: #a98cff;
+        }
+
+        .spinner {
+            width: 17px;
+            height: 17px;
+            border: 2px solid #4b3a73;
+            border-top-color: #a66cff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* SOURCES */
+        .sources {
+            margin-top: 22px;
+            display: none;
+        }
+
+        .sources-title {
+            color: #a98cff;
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .source-item {
+            display: block;
+            background: #0a111e;
+            border: 1px solid #263349;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            color: #aebbd0;
+            text-decoration: none;
+            font-size: 13px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            transition: 0.2s;
+        }
+
+        .source-item:hover {
+            border-color: #7549dc;
+            color: #ffffff;
+        }
+
+        /* FOOTER */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            border-top: 1px solid #172131;
+            background: #080d17;
+            padding: 18px;
+            text-align: center;
+            color: #506078;
+            font-size: 11px;
+        }
+
+        /* MOBILE */
+        @media (max-width: 600px) {
+            header {
+                height: 70px;
+            }
+
+            .hero {
+                padding: 50px 0 28px;
+            }
+
+            .hero h1 {
+                font-size: 34px;
+            }
+
+            .hero p {
+                font-size: 14px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            footer {
+                position: static;
+                margin-top: 50px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- HEADER -->
+        <header>
+            <div class="logo">
+                QalamAI <span>✨</span>
+            </div>
+
+            <div class="version">
+                Global Suite v1.0
+            </div>
+        </header>
+
+
+        <!-- HERO -->
+        <section class="hero">
+
+            <h1>
+                AI-Powered Content<br>
+                Intelligence<br>
+                <span class="purple">For Your Business</span>
+            </h1>
+
+            <p>
+                Supercharge your brand's digital marketing with enterprise-grade AI.
+                Instantly generate high-converting ad copies, social media posts,
+                and creative content.
+            </p>
+
+        </section>
+
+
+        <!-- AI CARD -->
+        <main class="card">
+
+            <label class="label" for="prompt">
+                WHAT WOULD YOU LIKE THE AI TO GENERATE TODAY?
+            </label>
+
+            <textarea
+                id="prompt"
+                placeholder="Example: Write a professional Facebook post about today's latest jobs in Pakistan..."
+            ></textarea>
+
+            <button
+                id="generateBtn"
+                class="generate-btn"
+                onclick="generateContent()"
+            >
+                Generate Magic ✨
+            </button>
+
+
+            <div class="divider"></div>
+
+
+            <div class="output-label">
+                QALAMAI ENGINE OUTPUT
+            </div>
+
+            <div id="output">
+                Your generated content will appear here...
+            </div>
+
+
+            <!-- SOURCES -->
+            <div id="sources" class="sources">
+
+                <div class="sources-title">
+                    🔎 Search Sources
+                </div>
+
+                <div id="sourceList"></div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <!-- FOOTER -->
+    <footer>
+        © 2026 QalamAI Intelligence Suite. All rights reserved.
+    </footer>
+
+
 <script>
-    // 1. Core Config (Agar aapke paas API key abhi nahi bhi lagi, tab bhi proxy block nahi hone degi)
-    const GEMINI_API_KEY = "YOUR_REAL_API_KEY_HERE"; 
-    
-    // Direct link block ho toh hum is automated tunnel routing ko target karte hain:
-    const DIRECT_ENDPOINT = `https://googleapis.com{GEMINI_API_KEY}`;
-    const PROXY_ENDPOINT = `https://allorigins.win{encodeURIComponent(DIRECT_ENDPOINT)}`;
 
-    const generateBtn = document.getElementById('generate-btn') || document.querySelector('button');
-    const promptInput = document.getElementById('prompt-input') || document.querySelector('input[type="text"]') || document.querySelector('textarea');
-    const outputContainer = document.getElementById('output-container') || document.querySelector('.border-dashed') || document.querySelector('[class*="Engine Output"]');
+    /*
+    ============================================================
+        QalamAI Configuration
+    ============================================================
 
-    if (generateBtn && promptInput && outputContainer) {
-        generateBtn.addEventListener('click', async () => {
-            const promptText = promptInput.value.trim();
-            
-            if (!promptText) {
-                alert("Please write a prompt first!");
+        IMPORTANT:
+        Replace YOUR_GEMINI_API_KEY_HERE with your real API key.
+
+        Example:
+
+        const GEMINI_API_KEY = "AIza....";
+
+    ============================================================
+    */
+
+    const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE";
+
+
+    /*
+        Current Gemini model.
+
+        Google Gemini API currently supports Gemini 3.x models
+        with Google Search grounding.
+    */
+
+    const MODEL = "gemini-3.8-flash";
+
+
+    /*
+        Gemini REST API endpoint
+    */
+
+    const API_URL =
+        `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
+
+
+    /*
+        Get HTML elements
+    */
+
+    const promptInput = document.getElementById("prompt");
+    const output = document.getElementById("output");
+    const generateBtn = document.getElementById("generateBtn");
+
+    const sourcesBox = document.getElementById("sources");
+    const sourceList = document.getElementById("sourceList");
+
+
+    /*
+        Allow Ctrl + Enter / Enter to generate.
+
+        Shift + Enter = new line.
+    */
+
+    promptInput.addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter" && !event.shiftKey) {
+
+            event.preventDefault();
+
+            generateContent();
+        }
+
+    });
+
+
+    /*
+        MAIN FUNCTION
+    */
+
+    async function generateContent() {
+
+        const prompt = promptInput.value.trim();
+
+
+        /*
+            Check prompt
+        */
+
+        if (!prompt) {
+
+            output.className = "error";
+
+            output.textContent =
+                "Please enter something for the AI to generate.";
+
+            promptInput.focus();
+
+            return;
+        }
+
+
+        /*
+            Check API key
+        */
+
+        if (
+            !GEMINI_API_KEY ||
+            GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE"
+        ) {
+
+            output.className = "error";
+
+            output.textContent =
+                "API key is missing. Open index.html and replace YOUR_GEMINI_API_KEY_HERE with your Gemini API key.";
+
+            return;
+        }
+
+
+        /*
+            Loading UI
+        */
+
+        generateBtn.disabled = true;
+
+        generateBtn.textContent = "Searching & Generating...";
+
+        output.className = "";
+
+        output.innerHTML = `
+            <span class="loading">
+                <span class="spinner"></span>
+                QalamAI is searching the web and generating your content...
+            </span>
+        `;
+
+
+        /*
+            Hide old sources
+        */
+
+        sourcesBox.style.display = "none";
+
+        sourceList.innerHTML = "";
+
+
+        /*
+            Strong system-style instruction
+        */
+
+        const fullPrompt = `
+You are QalamAI, an intelligent AI content assistant.
+
+User request:
+${prompt}
+
+Instructions:
+
+1. Understand exactly what the user wants.
+2. If the request needs current, latest, recent, live, today's,
+   or web-based information, use Google Search.
+3. Give accurate and useful information.
+4. Do not invent facts, dates, links, prices, names, or statistics.
+5. If sources are available, mention important source information.
+6. Format the answer clearly with headings and bullet points when useful.
+7. Keep the response professional and easy to read.
+8. Answer directly without unnecessary introductory text.
+        `;
+
+
+        try {
+
+            /*
+                Gemini request.
+
+                Google Search grounding is enabled here.
+            */
+
+            const response = await fetch(API_URL, {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type": "application/json",
+
+                    "x-goog-api-key": GEMINI_API_KEY
+
+                },
+
+                body: JSON.stringify({
+
+                    contents: [
+
+                        {
+
+                            role: "user",
+
+                            parts: [
+
+                                {
+                                    text: fullPrompt
+                                }
+
+                            ]
+
+                        }
+
+                    ],
+
+
+                    /*
+                        Enable Google Search.
+                    */
+
+                    tools: [
+
+                        {
+                            google_search: {}
+                        }
+
+                    ],
+
+
+                    generationConfig: {
+
+                        temperature: 0.7,
+
+                        maxOutputTokens: 4096
+
+                    }
+
+                })
+
+            });
+
+
+            /*
+                Convert response to JSON
+            */
+
+            const data = await response.json();
+
+
+            /*
+                HTTP error
+            */
+
+            if (!response.ok) {
+
+                console.error("Gemini API Error:", data);
+
+                let message =
+                    "Failed to generate content.";
+
+                if (data.error) {
+
+                    message =
+                        data.error.message ||
+                        data.error.status ||
+                        message;
+
+                }
+
+                throw new Error(message);
+            }
+
+
+            /*
+                Extract generated text
+            */
+
+            const generatedText =
+                extractText(data);
+
+
+            /*
+                If no text returned
+            */
+
+            if (!generatedText) {
+
+                console.error("Unexpected Gemini response:", data);
+
+                throw new Error(
+                    "Gemini returned no text. Please check your API key, model access, and request."
+                );
+            }
+
+
+            /*
+                Show result
+            */
+
+            output.className = "success";
+
+            output.textContent = generatedText;
+
+
+            /*
+                Extract Google Search sources
+            */
+
+            displaySources(data);
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            output.className = "error";
+
+            output.textContent =
+                "Failed to generate content.\n\n" +
+                error.message +
+                "\n\nPlease check your Gemini API key and internet connection.";
+
+        } finally {
+
+            generateBtn.disabled = false;
+
+            generateBtn.textContent =
+                "Generate Magic ✨";
+
+        }
+
+    }
+
+
+    /*
+    ============================================================
+        Extract text safely
+    ============================================================
+    */
+
+    function extractText(data) {
+
+        try {
+
+            const candidates = data.candidates;
+
+            if (!candidates || candidates.length === 0) {
+                return "";
+            }
+
+
+            const parts =
+                candidates[0]?.content?.parts || [];
+
+
+            return parts
+                .filter(part => typeof part.text === "string")
+                .map(part => part.text)
+                .join("\n")
+                .trim();
+
+        } catch (error) {
+
+            console.error(
+                "Text extraction error:",
+                error
+            );
+
+            return "";
+        }
+
+    }
+
+
+    /*
+    ============================================================
+        Display Google Search Sources
+    ============================================================
+    */
+
+    function displaySources(data) {
+
+        sourceList.innerHTML = "";
+
+
+        /*
+            Gemini can return grounding metadata
+            when Google Search is used.
+        */
+
+        const chunks =
+            data?.candidates?.[0]?.groundingMetadata?.groundingChunks;
+
+
+        if (!Array.isArray(chunks) || chunks.length === 0) {
+
+            sourcesBox.style.display = "none";
+
+            return;
+        }
+
+
+        const uniqueSources = [];
+
+        chunks.forEach(chunk => {
+
+            const web = chunk?.web;
+
+            if (!web) {
                 return;
             }
 
-            // UI State Change: Freeze state to prevent loops
-            generateBtn.disabled = true;
-            const originalBtnText = generateBtn.innerHTML;
-            generateBtn.innerHTML = "Generating Magic... ✨";
-            outputContainer.innerHTML = `<span style="color: #a78bfa; font-style: italic;">QalamAI Engine is communicating safely via secure tunnel...</span>`;
+            const uri = web.uri;
+            const title = web.title || uri;
 
-            // Payload Structure Setup
-            const payload = {
-                contents: [{
-                    parts: [{ text: promptText }]
-                }]
-            };
+            if (!uri) {
+                return;
+            }
 
-            try {
-                // First Attempt: Safe Proxy Route to completely bypass "Failed to fetch" browser blocks
-                const response = await fetch(PROXY_ENDPOINT, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+            if (
+                !uniqueSources.some(
+                    source => source.uri === uri
+                )
+            ) {
+
+                uniqueSources.push({
+                    uri,
+                    title
                 });
 
-                if (!response.ok) throw new Error("Tunnel routing issue.");
-
-                const proxyData = await response.json();
-                // AllOrigins wraps data inside a contents string, we parse it safely here:
-                const data = JSON.parse(proxyData.contents);
-                
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    outputContainer.style.color = "#f3f4f6";
-                    outputContainer.innerText = data.candidates[0].content.parts[0].text;
-                } else if (data.error) {
-                    throw new Error(data.error.message || "API Key Invalid");
-                } else {
-                    throw new Error("Invalid structure returned.");
-                }
-
-            } catch (error) {
-                console.warn("Proxy tunnel bypassed, trying direct secondary link...");
-                
-                // Fallback Attempt: Agar proxy server temporary busy ho, toh direct link backup chalayein
-                try {
-                    const directResponse = await fetch(DIRECT_ENDPOINT, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    
-                    const directData = await directResponse.json();
-                    if (directData.candidates && directData.candidates[0].content.parts[0].text) {
-                        outputContainer.style.color = "#f3f4f6";
-                        outputContainer.innerText = directData.candidates[0].content.parts[0].text;
-                    } else {
-                        throw new Error(directData.error?.message || "Authentication Failed");
-                    }
-                } catch (fallbackError) {
-                    outputContainer.innerHTML = `<span style="color: #f87171;">System Configuration Block: Kindly ensure your Google Studio API Key is valid. Error: ${fallbackError.message}</span>`;
-                }
-            } finally {
-                generateBtn.disabled = false;
-                generateBtn.innerHTML = originalBtnText;
             }
+
         });
+
+
+        if (uniqueSources.length === 0) {
+
+            sourcesBox.style.display = "none";
+
+            return;
+        }
+
+
+        uniqueSources.forEach(source => {
+
+            const link =
+                document.createElement("a");
+
+            link.className = "source-item";
+
+            link.href = source.uri;
+
+            link.target = "_blank";
+
+            link.rel = "noopener noreferrer";
+
+            link.textContent =
+                "🔗 " + source.title;
+
+
+            sourceList.appendChild(link);
+
+        });
+
+
+        sourcesBox.style.display = "block";
+
     }
+
+
 </script>
+
+</body>
+</html>
