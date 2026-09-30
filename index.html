@@ -169,7 +169,71 @@
                 box.innerText = `[QalamAI Generated Global Copy]\n\n🎯 TARGET ENGAGEMENT ACTIVATED.\n\nBased on your query "${text}", our AI engine suggests optimization. Crafting bespoke corporate layouts for high retention rates.\n\n✨ Strategic Structural Layout\n✨ High CTR Focus\n\n👉 Launch your global business campaign now. #QalamAI`;
             }
         }
-    </script>
+    <script>
+    // 1. API Configuration & Selectors
+    // NOTE: Production mein API Key ko secure karne ke liye backend proxy zaroori hai. 
+    // Frontend par direct use karne ke liye aap yahan apni Key paste karein:
+    const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"; 
+    const GEMINI_ENDPOINT = `https://googleapis.com{GEMINI_API_KEY}`;
+
+    const generateBtn = document.getElementById('generate-btn'); // Apne button ki ID yahan check karlein
+    const promptInput = document.getElementById('prompt-input'); // Apne textarea/input ki ID
+    const outputContainer = document.getElementById('output-container'); // Jaha jawab dikhana hai
+
+    // 2. Click Event Listener
+    generateBtn.addEventListener('click', async () => {
+        const promptText = promptInput.value.trim();
+        
+        if (!promptText) {
+            alert("Plz kuch prompt likhein!");
+            return;
+        }
+
+        // UI State: Loading shuru karein aur button ko disable karein taake hang na ho
+        generateBtn.disabled = true;
+        generateBtn.innerText = "Generating Magic...";
+        outputContainer.innerHTML = `<div class="loading-spinner">AI is thinking...</div>`; 
+
+        try {
+            // 3. API Fetch Request (Direct Browser Endpoint)
+            const response = await fetch(GEMINI_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: promptText
+                        }]
+                    }]
+                })
+            });
+
+            // 4. Response Handling
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            
+            // Gemini response se text extract karne ka sahi tareeqa
+            const aiResponse = data.candidates[0].content.parts[0].text;
+            
+            // Output ko display karwana
+            outputContainer.innerText = aiResponse;
+
+        } catch (error) {
+            console.error("QalamAI Error:", error);
+            outputContainer.innerHTML = `<span style="color: #ff6b6b;">Error: ${error.message}. Please check your API Key or Network.</span>`;
+        } finally {
+            // UI State: Button ko wapas normal karein
+            generateBtn.disabled = false;
+            generateBtn.innerText = "Generate Magic";
+        }
+    });
+</script>
+
 
 </body>
 </html>
