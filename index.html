@@ -124,6 +124,32 @@
     <footer>
         &copy; 2026 QalamAI Inc. All Rights Reserved. Proprietary Global Technology System.
     </footer>
+<script>
+    const btn = document.querySelector('.magic-btn');
+    const input = document.querySelector('input[type="text"]');
+    const output = document.querySelector('.output-placeholder');
+
+    btn.addEventListener('click', async () => {
+        if(!input.value.trim()) return alert('Please enter a prompt!');
+        
+        btn.innerText = 'Generating Magic... ✨';
+        output.innerText = 'Connecting to QalamAI Core Engine...';
+
+        try {
+            const response = await fetch('/api/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: input.value })
+            });
+            const data = await response.json();
+            output.innerText = data.text || 'Error generating response.';
+        } catch (err) {
+            output.innerText = 'Connection Error. Please check backend setup.';
+        } finally {
+            btn.innerText = 'Generate Magic ✨';
+        }
+    });
+</script>
 
 </body>
 </html>
